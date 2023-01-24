@@ -1,3 +1,114 @@
-*, *::before, *::after {
-    box-sizing: border-box;
+@import 'config';
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: $clr-light;
+  color: hsl(200, 100%, 10%);
+  font-family: sans-serif;
+}
+
+.blurred {
+  filter: blur(3px);
+  overflow: hidden;
+}
+
+.header {
+  @include flex();
+
+  &-left {
+    @include flex();
+    justify-content: center;
+    width: 50%;
+    margin: 0.5rem;
+    padding: 0.5rem;
+    border-right: 2px solid $clr-dark;
+
+    .weather-icon.large {
+      width: 5rem;
+      aspect-ratio: 1;
+    }
+
+    &-current-temp {
+      font-size: 2rem;
+      margin-left: 1rem;
+    }
+  }
+
+  &-right {
+    width: 50%;
+    display: grid;
+    justify-content: space-around;
+    gap: 0.5rem;
+    grid-template-columns: repeat(3, 1fr);
+
+    .info-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .label {
+        text-transform: uppercase;
+        font-weight: bold;
+        // font-size: 0.6rem;
+        color: $clr-lighter;
+      }
+
+      .value-sub-info {
+        font-weight: lighter;
+        font-size: 0.75rem;
+      }
+    }
+  }
+}
+
+.weather-icon {
+  width: 2.5rem;
+  aspect-ratio: 1;
+  //   object-fit: contain;
+}
+
+.day {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 75px);
+  gap: 0.75rem;
+  justify-content: center;
+  padding: 1rem;
+
+  &-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid $clr-dark;
+    border-radius: 0.25rem;
+
+    &-day {
+      font-size: 0.75rem;
+      color: $clr-lighter;
+      margin-top: 0.5rem;
+    }
+  }
+}
+
+.hour {
+  width: 100%;
+  text-align: center;
+  border-spacing: 0;
+
+  &-row {
+    background-color: hsl(200, 60%, 75%);
+
+    td {
+      padding: 0.25rem 0.5rem;
+    }
+  }
+
+  &-row:nth-child(even) {
+    background-color: hsl(200, 60%, 70%);
+  }
 }

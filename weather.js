@@ -15,10 +15,11 @@ export function getWeather(lat, long, timezone) {
     .then(data => {
       // console.log(data.data.daily);
       // return data;
+
       return {
         current: parseCurrentWeather(data.data),
         daily: parseDailyWeather(data.data),
-        // hourly: parseHourlyWeather(data),
+        hourly: parseHourlyWeather(data.data),
       };
     });
 }
@@ -54,9 +55,23 @@ function parseDailyWeather({ daily }) {
       timestamp: time * 1000,
       iconCode: daily.weathercode[index],
       maxTemp: Math.round(daily.temperature_2m_max[index]),
-      // minTemp: Math.round(daily.temperature_2m_min[index]),
     };
   });
 }
 
-// NOTE: Stopped video at 33:58
+function parseHourlyWeather({ hourly, current_weather }) {
+  return hourly.time
+    .map((time, index) => {
+      return {
+        timestamp: time * 1000,
+        iconCode: hourly.weathercode[index],
+        temp: Math.round(hourly.temperature_2m_max[index]),
+        feelsLike: Math.round(hourly.apparent_temperature[index]),
+        windSpeed: Math.round(hourly.windspeed_10m[index]),
+        precip: hourly.precipitation[index] * 100,
+      };
+    })
+    .filter(({ timestamp }) => timestamp >= current_weather.time * 1000);
+}
+
+// NOTE: Stopped video at 52:31

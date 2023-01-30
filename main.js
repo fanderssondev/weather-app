@@ -1,12 +1,26 @@
-import { ICON_MAP } from './iconMap';
 import { getWeather } from './weather';
+import { ICON_MAP } from './iconMap';
 
-getWeather(41.41, 2.15, Intl.DateTimeFormat().resolvedOptions().timeZone)
-  .then(renderWeather)
-  .catch(e => {
-    console.log(e);
-    alert('Error getting weather');
-  });
+navigator.geolocation.getCurrentPosition(positionSuccess, positionError);
+
+function positionSuccess({ coords }) {
+  getWeather(
+    coords.latitude,
+    coords.longitude,
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  )
+    .then(renderWeather)
+    .catch(e => {
+      console.log(e);
+      alert('Error getting weather.');
+    });
+}
+
+function positionError() {
+  alert(
+    'There was an error getting your location. Please allow use of location and refresh the page.'
+  );
+}
 
 function renderWeather({ current, daily, hourly }) {
   renderCurrentWeather(current);
@@ -15,18 +29,22 @@ function renderWeather({ current, daily, hourly }) {
   document.body.classList.remove('blurred');
 }
 
+// Set value of data attribute
 function setValue(selector, value, { parent = document } = {}) {
-  parent.querySelector(`[data-${selector}]`).textContent = value;
+  return (parent.querySelector(`[data-${selector}]`).textContent = value);
 }
 
+// Get data attribute
 function $(selector, parent = document) {
   return parent.querySelector(`[data-${selector}]`);
 }
 
+// Get the icon
 function getIconURL(iconCode) {
   return `icons/${ICON_MAP.get(iconCode)}.svg`;
 }
 
+// Render the current weather
 const currentIcon = $('current-icon');
 function renderCurrentWeather(current) {
   currentIcon.src = getIconURL(current.iconCode);
@@ -39,6 +57,7 @@ function renderCurrentWeather(current) {
   setValue('current-precip', current.precip);
 }
 
+// Render the daily weather
 const DAY_FORMATTER = new Intl.DateTimeFormat(undefined, { weekday: 'long' });
 const dailySection = $('day-section');
 const dayCardTemplate = document.getElementById('day-card-template');
@@ -48,13 +67,16 @@ function renderDailyWeather(daily) {
     const element = dayCardTemplate.content.cloneNode(true);
     setValue('temp', day.maxTemp, { parent: element });
     setValue('day', DAY_FORMATTER.format(day.timestamp), { parent: element });
-    // element.querySelector('[data-icon]').src = getIconURL(day.iconCode);
     $('icon', element).src = getIconURL(day.iconCode);
     dailySection.append(element);
   });
 }
 
-const HOUR_FORMATTER = new Intl.DateTimeFormat(undefined, { hour: 'numeric' });
+// Render the hourly weather
+const HOUR_FORMATTER = new Intl.DateTimeFormat(undefined, {
+  hour12: false,
+  timeStyle: 'short',
+});
 const hourlySection = $('hour-section');
 const hourRowTemplate = document.getElementById('hour-row-template');
 function renderHourlyWeather(hourly) {
@@ -66,9 +88,10 @@ function renderHourlyWeather(hourly) {
     setValue('wind', hour.windSpeed, { parent: element });
     setValue('precip', hour.precip, { parent: element });
     setValue('day', DAY_FORMATTER.format(hour.timestamp), { parent: element });
-    setValue('time', HOUR_FORMATTER.format(hour.timestamp), { parent: element });
-    element.querySelector('[data-icon]').src = getIconURL(hour.iconCode);
-    // $('icon', element).src = getIconURL(hour.iconCode);
+    setValue('time', HOUR_FORMATTER.format(hour.timestamp), {
+      parent: element,
+    });
+    $('icon', element).src = getIconURL(hour.iconCode);
     hourlySection.append(element);
-  }
+  });
 }

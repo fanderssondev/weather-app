@@ -74,5 +74,3 @@ function parseHourlyWeather({ hourly, current_weather }) {
     })
     .filter(({ timestamp }) => timestamp >= current_weather.time * 1000);
 }
-
-// NOTE: Stopped video at 52:31

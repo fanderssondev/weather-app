@@ -42,8 +42,9 @@ function $(selector, parent = document) {
 }
 
 // Get the icon
+// BUG Incorrect file path
 function getIconURL(iconCode) {
-  return `dist/icons/${ICON_MAP.get(iconCode)}.svg`;
+  return `./dist/icons/${ICON_MAP.get(iconCode)}.svg`;
 }
 
 // Render the current weather

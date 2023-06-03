@@ -43,7 +43,7 @@ function $(selector, parent = document) {
 
 // Get the icon
 function getIconURL(iconCode) {
-  return `icons/${ICON_MAP.get(iconCode)}.svg`;
+  return `dist/icons/${ICON_MAP.get(iconCode)}.svg`;
 }
 
 // Render the current weather
